@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>숫자 맞추기 게임</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .game-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .input-section {
+            margin: 1.5rem 0;
+        }
+        input {
+            padding: 0.5rem;
+            font-size: 1rem;
+            width: 100px;
+            margin-right: 0.5rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+        .status {
+            margin-top: 1rem;
+            color: #666;
+        }
+        .best-score {
+            color: #2196F3;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>숫자 맞추기 게임</h1>
+        <p>1부터 100 사이의 숫자를 맞춰보세요!</p>
+        
+        <div class="input-section">
+            <input type="number" id="guess" min="1" max="100">
+            <button onclick="checkGuess()">확인</button>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="status">
+            <p>시도 횟수: <span id="attempts">0</span></p>
+            <p>최고 기록: <span id="bestScore" class="best-score">없음</span></p>
+        </div>
+        
+        <button onclick="resetGame()">새 게임</button>
+    </div>
+
+    <script>
+        let targetNumber;
+        let attempts;
+        let bestScore = Infinity;
+        
+        function initGame() {
+            targetNumber = Math.floor(Math.random() * 100) + 1;
+            attempts = 0;
+            updateUI();
+        }
+        
+        function checkGuess() {
+            const guessInput = document.getElementById('guess');
+            const guess = parseInt(guessInput.value);
+            const messageElement = document.getElementById('message');
+            
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                messageElement.innerHTML = '1부터 100 사이의 숫자를 입력해주세요.';
+                messageElement.style.backgroundColor = '#ffebee';
+                return;
+            }
+            
+            attempts++;
+            
+            if (guess === targetNumber) {
+                messageElement.innerHTML = `정답입니다! ${attempts}번 만에 맞추셨습니다!`;
+                messageElement.style.backgroundColor = '#e8f5e9';
+                if (attempts < bestScore) {
+                    bestScore = attempts;
+                }
+            } else if (guess < targetNumber) {
+                messageElement.innerHTML = '더 높은 숫자입니다!';
+                messageElement.style.backgroundColor = '#fff3e0';
+            } else {
+                messageElement.innerHTML = '더 낮은 숫자입니다!';
+                messageElement.style.backgroundColor = '#fff3e0';
+            }
+            
+            updateUI();
+            guessInput.value = '';
+            guessInput.focus();
+        }
+        
+        function updateUI() {
+            document.getElementById('attempts').textContent = attempts;
+            document.getElementById('bestScore').textContent = 
+                bestScore === Infinity ? '없음' : `${bestScore}회`;
+        }
+        
+        function resetGame() {
+            initGame();
+            document.getElementById('message').innerHTML = '';
+            document.getElementById('message').style.backgroundColor = 'transparent';
+            document.getElementById('guess').value = '';
+        }
+        
+        // 게임 초기화
+        initGame();
+
+        // Enter 키로 확인하기
+        document.getElementById('guess').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkGuess();
+            }
+        });
+    </script>
+</body>
+</html>
